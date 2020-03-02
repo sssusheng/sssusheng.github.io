@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="​        基本排序算法的原理及实现：冒泡排序(bubble_sort)，选择排序(select_sort)，插入排序(insert_sort)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python基本排序算法">
+<meta property="og:url" content="http://yoursite.com/2020/02/14/python%E5%9F%BA%E6%9C%AC%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="苏生-Blog">
+<meta property="og:description" content="​        基本排序算法的原理及实现：冒泡排序(bubble_sort)，选择排序(select_sort)，插入排序(insert_sort)。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-14T15:25:47.000Z">
+<meta property="article:modified_time" content="2020-02-19T15:14:18.984Z">
+<meta property="article:author" content="苏生">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/14/python%E5%9F%BA%E6%9C%AC%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>python基本排序算法 | 苏生-Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">苏生-Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">只会长大，不会老去。</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/14/python%E5%9F%BA%E6%9C%AC%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/myhead.jpg">
+      <meta itemprop="name" content="苏生">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="苏生-Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          python基本排序算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-14 23:25:47" itemprop="dateCreated datePublished" datetime="2020-02-14T23:25:47+08:00">2020-02-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-19 23:14:18" itemprop="dateModified" datetime="2020-02-19T23:14:18+08:00">2020-02-19</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>​        基本排序算法的原理及实现：冒泡排序(bubble_sort)，选择排序(select_sort)，插入排序(insert_sort)。</p>
+<a id="more"></a>
+
+<h1 id="基本排序算法"><a href="#基本排序算法" class="headerlink" title="基本排序算法"></a>基本排序算法</h1><h2 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h2><h3 id="思想原理"><a href="#思想原理" class="headerlink" title="思想原理"></a>思想原理</h3><ol>
+<li>最简单的排序算法，没有之一。对输入的数组进行<code>n-1</code>轮的迭代(最后一轮已经是有序的了，不需要迭代，所以是<code>n-1</code>轮)。</li>
+<li>每次比较相邻的两个元素，如果前者大于后者，将两者交换位置，因为是原地操作，所以空间复杂度为<code>O(1)</code>。</li>
+<li>比如第一轮迭代，会将最大的元素移到数组末尾；第二轮会将第二大的元素移到次末尾；以此类推。</li>
+<li>因为有两层迭代，所以时间复杂度是<code>O(n²)</code>。</li>
+</ol>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bubble_sort</span><span class="params">(seq)</span>:</span></span><br><span class="line">    n = len(seq)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(n - <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(n - j - <span class="number">1</span>):</span><br><span class="line">            <span class="keyword">if</span> seq[i] &gt; seq[i + <span class="number">1</span>]:</span><br><span class="line">                seq[i], seq[i + <span class="number">1</span>] = seq[i + <span class="number">1</span>], seq[i]</span><br><span class="line">    <span class="keyword">return</span> seq</span><br></pre></td></tr></table></figure>
+
+<h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h2><h3 id="思想原理-1"><a href="#思想原理-1" class="headerlink" title="思想原理"></a>思想原理</h3><ol>
+<li>与冒泡排序类似，进行<code>n-1</code>轮迭代。</li>
+<li>每一轮迭代中，选中某个元素，将该元素与它之后的所有元素进行比较，找出在该元素以及该元素之后的所有元素中最小的一个，将它与该元素交换位置，原地操作，空间复杂度<code>O(1)</code>。</li>
+<li>比如第一轮迭代，选中数组中的第一个元素，将该元素与其他元素依次进行比较，选出最小的，与之交换；第二轮迭代，选中第二个元素，找出剩下最小的，与第二个元素交换；以此类推。</li>
+<li>两层迭代，时间复杂度<code>O(n²)</code>。</li>
+</ol>
+<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">select_sort</span><span class="params">(seq)</span>:</span></span><br><span class="line">    n = len(seq)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(n - <span class="number">1</span>):</span><br><span class="line">        min_index = j</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(j + <span class="number">1</span>, n):</span><br><span class="line">            <span class="keyword">if</span> seq[i] &lt; seq[j]:</span><br><span class="line">                min_index = i</span><br><span class="line">        <span class="keyword">if</span> min_index != j:</span><br><span class="line">            seq[j], seq[min_index] = seq[min_index], seq[j]</span><br><span class="line">    <span class="keyword">return</span> seq</span><br></pre></td></tr></table></figure>
+
+<h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><h3 id="思想原理-2"><a href="#思想原理-2" class="headerlink" title="思想原理"></a>思想原理</h3><ol>
+<li>对数组进行<code>n-1</code>次迭代，从第二个元素开始到最后一个元素。</li>
+<li>每一轮迭代中，取出当前迭代的元素，将其与该元素之前的元素进行对比，直到碰到比该元素小的元素，将该元素插入到小元素之后，原地操作，空间复杂度<code>O(1)</code>。</li>
+<li>比如，第一轮迭代，第二个元素比第一个元素小，插入到第一个元素前面，若比第一个元素大，则插入到后面；第二轮迭代，第三个元素比第二个元素小，比第一个大，则插入到中间，比第一个小，插入到第一个前面，比第二个大，插入到第二个后面；以此类推，第<code>n</code>次迭代，选取的是第<code>n+1</code>个元素，在此元素之前的元素都是已经排好序的，只需要找到合适的位置插入即可。</li>
+<li>两层迭代，时间复杂度<code>O(n²)</code>。</li>
+</ol>
+<h3 id="代码实现-2"><a href="#代码实现-2" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insert_sort</span><span class="params">(seq)</span>:</span></span><br><span class="line">    n = len(seq)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, n):</span><br><span class="line">        value = seq[i]</span><br><span class="line">        pos = i</span><br><span class="line">        <span class="keyword">while</span> pos &gt; <span class="number">0</span> <span class="keyword">and</span> value &lt; seq[pos - <span class="number">1</span>]:</span><br><span class="line">            seq[pos] = seq[pos - <span class="number">1</span>]</span><br><span class="line">            pos -= <span class="number">1</span></span><br><span class="line">        seq[pos] = value</span><br><span class="line">    <span class="keyword">return</span> seq</span><br></pre></td></tr></table></figure>
+
+<h2 id="三种排序算法的比较"><a href="#三种排序算法的比较" class="headerlink" title="三种排序算法的比较"></a>三种排序算法的比较</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>原地排序</th>
+<th>稳定排序</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>冒泡</td>
+<td>是</td>
+<td>是</td>
+<td><code>O(n²)</code></td>
+</tr>
+<tr>
+<td>选择</td>
+<td>是</td>
+<td>否</td>
+<td><code>O(n²)</code></td>
+</tr>
+<tr>
+<td>插入</td>
+<td>是</td>
+<td>是</td>
+<td><code>O(n²)</code></td>
+</tr>
+</tbody></table>
+<h3 id="稳定排序算法"><a href="#稳定排序算法" class="headerlink" title="稳定排序算法"></a>稳定排序算法</h3><p>在经过算法排序之后，被排序的对象里，相同的两个元素前后顺序没有发生改变，即为稳定的排序算法。</p>
+<p>比如数组<code>[5, 8, 4, 5, 3]</code>的排序：</p>
+<ul>
+<li>冒泡排序算法，每次只相邻的两个元素比较交换位置，如果两个元素相等，则不交换位置，所以冒泡排序是稳定的排序算法。</li>
+<li>选择排序算法，选定第一个<code>5</code>，<code>5</code>之后的元素中<code>3</code>最小，与<code>3</code>交换位置，此时第一个<code>5</code>被交换到了第二个<code>5</code>后面，两个相同的元素在经过排序之后，位置可能发生了改变，所以选择排序是不稳定的排序算法。</li>
+<li>插入排序算法，对于先排序好的元素，后排序的元素选择插入到相同的元素后面，没有发生位置变化的可能，所以插入排序是稳定的排序算法。</li>
+</ul>
+<p>稳定排序算法优于不稳定算法的场景</p>
+<blockquote>
+<p>例如现在我们手上一堆(数量很大)订单，要把订单先按金额从小到大排序，再在金额相同的订单小区间内，对下单时间进行从早到晚的排序，实现起来了会很麻烦。但是使用稳定排序，第一次可以用随意的排序方法，对下单时间排序，下单早的在下单晚的前面，第二次再用稳定排序算法，对订单金额进行排序，此时，金额相同的区间内，下单早的还是在下单晚的前面。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/09/python%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E9%98%9F%E5%88%97(Queue)/" rel="prev" title="python数据结构之队列(Queue)">
+      <i class="fa fa-chevron-left"></i> python数据结构之队列(Queue)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本排序算法"><span class="nav-number">1.</span> <span class="nav-text">基本排序算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#冒泡排序"><span class="nav-number">1.1.</span> <span class="nav-text">冒泡排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思想原理"><span class="nav-number">1.1.1.</span> <span class="nav-text">思想原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现"><span class="nav-number">1.1.2.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择排序"><span class="nav-number">1.2.</span> <span class="nav-text">选择排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思想原理-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">思想原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入排序"><span class="nav-number">1.3.</span> <span class="nav-text">插入排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思想原理-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">思想原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码实现-2"><span class="nav-number">1.3.2.</span> <span class="nav-text">代码实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三种排序算法的比较"><span class="nav-number">1.4.</span> <span class="nav-text">三种排序算法的比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#稳定排序算法"><span class="nav-number">1.4.1.</span> <span class="nav-text">稳定排序算法</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="苏生"
+      src="/images/myhead.jpg">
+  <p class="site-author-name" itemprop="name">苏生</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">苏生</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
