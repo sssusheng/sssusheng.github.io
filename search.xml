@@ -1,6 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>python高级排序算法(一)</title>
+    <url>/2020/02/17/python%E9%AB%98%E7%BA%A7%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95(%E4%B8%80)/</url>
+    <content><![CDATA[<p>​        高级排序算法的原理及实现：归并排序(merge_sort)，快速排序(quick_sort)。</p>
+<a id="more"></a>
+
+<h1 id="高级排序算法"><a href="#高级排序算法" class="headerlink" title="高级排序算法"></a>高级排序算法</h1><p>很多有用的算法结构上是递归的，为了解决一个特定问题，算法一次或者多次递归调用其自身以解决若干子问题。<br>这些算法典型地遵循分治法的思想：将原问题分解为几个规模较小但是类似于原问题的子问题，递归求解这些子问题，<br>然后再合并这些问题的解来建立原问题的解。</p>
+<p>分治法在每层递归时有三个步骤：</p>
+<ul>
+<li><strong>分解</strong>原问题为若干子问题，这些子问题是原问题的规模最小的实例</li>
+<li><strong>解决</strong>这些子问题，递归地求解这些子问题。当子问题的规模足够小，就可以直接求解</li>
+<li><strong>合并</strong>这些子问题的解成原问题的解</li>
+</ul>
+<h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><h3 id="思想原理"><a href="#思想原理" class="headerlink" title="思想原理"></a>思想原理</h3><p>归并排序是是如何利用分治法解决问题的。</p>
+<ul>
+<li><strong>分解</strong>：将待排序的 n 个元素分成各包含 n/2 个元素的子序列</li>
+<li><strong>解决</strong>：使用归并排序递归排序两个子序列</li>
+<li><strong>合并</strong>：合并两个已经排序的子序列以产生已排序的答案</li>
+</ul>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_sort</span><span class="params">(seq)</span>:</span></span><br><span class="line">    n = len(seq)</span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> seq</span><br><span class="line"></span><br><span class="line">    mid = n // <span class="number">2</span></span><br><span class="line">    left = merge_sort(seq[:mid])</span><br><span class="line">    right = merge_sort(seq[mid:])</span><br><span class="line"></span><br><span class="line">    new_seq = merge_sort_list(left, right)</span><br><span class="line">    <span class="keyword">return</span> new_seq</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_sort_list</span><span class="params">(left, right)</span>:</span></span><br><span class="line">    l_len = len(left)</span><br><span class="line">    r_len = len(right)</span><br><span class="line">    a = b = <span class="number">0</span></span><br><span class="line">    new_seq = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> a &lt; l_len <span class="keyword">and</span> b &lt; r_len:</span><br><span class="line">        <span class="keyword">if</span> left[a] &lt; right[b]:</span><br><span class="line">            new_seq.append(left[a])</span><br><span class="line">            a += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            new_seq.append(right[b])</span><br><span class="line">            b += <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">    <span class="keyword">while</span> a &lt; l_len:</span><br><span class="line">        new_seq.append(left[a])</span><br><span class="line">        a += <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> b &lt; r_len:</span><br><span class="line">        new_seq.append(right[b])</span><br><span class="line">        b += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> new_seq</span><br></pre></td></tr></table></figure>
+
+<h2 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h2><h3 id="思想原理-1"><a href="#思想原理-1" class="headerlink" title="思想原理"></a>思想原理</h3><p>和归并排序一样，快排也是一种分而治之(divide and conquer)的策略。归并排序把数组递归成只有单个元素的数组，之后再不断两两合并，最后得到一个有序数组。这里的递归基本条件就是只包含一个元素的数组，当数组只包含一个元素的时候，我们可以认为它本来就是有序的（当然空数组也不用排序）。</p>
+<p>快排的工作过程其实比较简单，三步走：</p>
+<ul>
+<li>选择基准值 pivot 将数组分成两个子数组：小于基准值的元素和大于基准值的元素。这个过程称之为 partition</li>
+<li>对这两个子数组进行快速排序。</li>
+<li>合并结果</li>
+</ul>
+<p>但是，下面代码中第一个快排的实现并不优秀，他占用了额外的存储空间，且遍历了两次数组；能否实现只遍历一次数组就可以完成 partition 操作呢？</p>
+<blockquote>
+<p>实际上是可以的。我们设置首位俩个指针 left, right，两个指针不断向中间收拢；如果遇到 left 位置的元素大于 pivot 并且 right 指向的元素小于 pivot，我们就交换这俩元素；</p>
+<p>当 left &gt; right 的时候退出就行了，这样实现了一次遍历就完成了 partition。</p>
+</blockquote>
+<h3 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quick_sort</span><span class="params">(seq)</span>:</span></span><br><span class="line">    p = seq[<span class="number">0</span>]</span><br><span class="line">    small_seq = [i <span class="keyword">for</span> i <span class="keyword">in</span> seq[<span class="number">1</span>:] <span class="keyword">if</span> i &lt; p]</span><br><span class="line">    big_seq = [i <span class="keyword">for</span> i <span class="keyword">in</span> seq[<span class="number">1</span>:] <span class="keyword">if</span> i &gt;= p]</span><br><span class="line">    new_seq = small_seq + [p] + big_seq</span><br><span class="line">    <span class="keyword">return</span> new_seq</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partition</span><span class="params">(seq, beg, end)</span>:</span></span><br><span class="line">    pivot_index = beg</span><br><span class="line">    pivot = seq[pivot_index]</span><br><span class="line">    left = pivot_index + <span class="number">1</span></span><br><span class="line">    right = end - <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">while</span> left &lt;= right <span class="keyword">and</span> seq[left] &lt; pivot:</span><br><span class="line">            left += <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> left &lt;= right <span class="keyword">and</span> seq[right] &gt;= pivot:</span><br><span class="line">            right -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> left &gt; right:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            seq[left], seq[right] = seq[right], seq[left]</span><br><span class="line">    seq[pivot_index], seq[right] = seq[right], seq[pivot_index]</span><br><span class="line">    <span class="keyword">return</span> right</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quick_sort_inplace</span><span class="params">(seq, beg, end)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> beg &lt; end:</span><br><span class="line">        pivot = partition(seq, beg, end)</span><br><span class="line">        quick_sort_inplace(seq, beg, pivot)</span><br><span class="line">        quick_sort_inplace(seq, pivot + <span class="number">1</span>, end)</span><br><span class="line">    <span class="keyword">return</span> seq</span><br></pre></td></tr></table></figure>
+
+<h2 id="两种排序算法的比较"><a href="#两种排序算法的比较" class="headerlink" title="两种排序算法的比较"></a>两种排序算法的比较</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>原地排序</th>
+<th>稳定排序</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>归并</td>
+<td>否</td>
+<td>是</td>
+<td><code>O(nlogn)</code></td>
+</tr>
+<tr>
+<td>快排</td>
+<td>是</td>
+<td>否</td>
+<td><code>O(nlogn)</code></td>
+</tr>
+</tbody></table>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3>]]></content>
+  </entry>
+  <entry>
     <title>python基本排序算法</title>
     <url>/2020/02/14/python%E5%9F%BA%E6%9C%AC%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[<p>​        基本排序算法的原理及实现：冒泡排序(bubble_sort)，选择排序(select_sort)，插入排序(insert_sort)。</p>
@@ -305,6 +364,94 @@
 
 <h4 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_array</span><span class="params">()</span>:</span></span><br><span class="line">    size = <span class="number">10</span></span><br><span class="line">    a = Array(size)</span><br><span class="line">    a[<span class="number">0</span>] = <span class="number">1</span></span><br><span class="line">    <span class="keyword">assert</span> a[<span class="number">0</span>] == <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    a.clear()</span><br><span class="line">    <span class="keyword">assert</span> a[<span class="number">0</span>] <span class="keyword">is</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
 
+]]></content>
+  </entry>
+  <entry>
+    <title>Git常用指令</title>
+    <url>/2019/06/03/Git%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/</url>
+    <content><![CDATA[<p>​        Git是目前世界上最先进的分布式版本控制系统。</p>
+<a id="more"></a>
+
+<h1 id="Git"><a href="#Git" class="headerlink" title="Git"></a>Git</h1><p>什么是分布式版本控制系统？</p>
+<p>先说集中式版本控制系统，版本库是集中存放在中央服务器的，而干活的时候，用的都是自己的电脑，所以要先从中央服务器取得最新的版本，然后开始干活，干完活了，再把自己的活推送给中央服务器。中央服务器就好比是一个图书馆，你要改一本书，必须先从图书馆借出来，然后回到家自己改，改完了，再放回图书馆。</p>
+<p>集中式版本控制系统最大的毛病就是必须联网才能工作，如果在局域网内还好，带宽够大，速度够快，可如果在互联网上，遇到网速慢的话，可能提交一个10M的文件就需要5分钟。</p>
+<p>那分布式版本控制系统与集中式版本控制系统有何不同呢？首先，分布式版本控制系统根本没有“中央服务器”，每个人的电脑上都是一个完整的版本库，这样，你工作的时候，就不需要联网了，因为版本库就在你自己的电脑上。既然每个人电脑上都有一个完整的版本库，那多个人如何协作呢？比方说你在自己电脑上改了文件A，你的同事也在他的电脑上改了文件A，这时，你们俩之间只需把各自的修改推送给对方，就可以互相看到对方的修改了。</p>
+<p>和集中式版本控制系统相比，分布式版本控制系统的安全性要高很多，因为每个人电脑里都有完整的版本库，某一个人的电脑坏掉了不要紧，随便从其他人那里复制一个就可以了。而集中式版本控制系统的中央服务器要是出了问题，所有人都没法干活了。</p>
+<p>在实际使用分布式版本控制系统的时候，其实很少在两人之间的电脑上推送版本库的修改，因为可能你们俩不在一个局域网内，两台电脑互相访问不了，也可能今天你的同事病了，他的电脑压根没有开机。因此，分布式版本控制系统通常也有一台充当“中央服务器”的电脑，但这个服务器的作用仅仅是用来方便“交换”大家的修改，没有它大家也一样干活，只是交换修改不方便而已。</p>
+<h2 id="Git基本命令"><a href="#Git基本命令" class="headerlink" title="Git基本命令"></a>Git基本命令</h2><p>git init  创建版本库</p>
+<p>git add xxx  把文件加入到仓库</p>
+<p>git commit -m “备注”  把之前加入到仓库的文件提交到仓库</p>
+<p>git diff xxx  查看xxx文件具体修改了什么内容</p>
+<p>git status  掌握仓库当前状态，什么被修改了，什么将要被提交</p>
+<p>git log 显示从最近到最远的提交日志</p>
+<p>​        –pretty oneline  使每一次的提交输出显示在一行内</p>
+<p>git reset  版本回退命令</p>
+<p>​        –hard HEAD(^表示上版本，^^表示上上版本，~100表示上100个版本，HEAD指向的版本就是当前版本)</p>
+<p>​        –hard xxxx(xxxx为版本号，一长串可以不写全，回到指定版本)</p>
+<p>git reflog  记录每一次改动命令，可以用于：回退了版本，但是又想回到回退前的版本，忘记了版本号，可以通过这个命令找到</p>
+<p>git clone <a href="mailto:git@github.com">git@github.com</a>:sssusheng/xxx.git  在GitHub上可以任意Fork开源仓库，然后自己可以对自己Fork的仓库进行修改</p>
+<h2 id="Git版本管理"><a href="#Git版本管理" class="headerlink" title="Git版本管理"></a>Git版本管理</h2><p>工作区(Working Directory)</p>
+<p>​        在电脑里能直接看到的目录</p>
+<p>版本库(Repository)</p>
+<p>​        工作区中有一个隐藏目录 .git，是Git的版本库</p>
+<p>​        版本库里重要的有：被称为stage(或index)的暂存区，Git为我们自动创建的第一个分支master，指向的master的一个指针HEAD</p>
+<p>​        git add 把文件修改添加到暂存区</p>
+<p>​        git commit 把暂存区的所有内容提交到当前分支</p>
+<p>git checkout – xxx  把xxx文件在工作区的修改全部撤销</p>
+<p>​        如果xxx修改后没有add，撤销回到版本库里的状态</p>
+<p>​        如果xxx修改了add并再修改，撤销回到add后的状态</p>
+<p>​        即让xxx回到最近一次commit或add时的状态</p>
+<p>​        或者说是用版本库里的版本替换工作区的版本</p>
+<p>git reset HEAD xxx  把add后还没提交的修改撤销</p>
+<p>git rm xxx  从版本库中把xxx文件删除</p>
+<h2 id="创建远程仓库"><a href="#创建远程仓库" class="headerlink" title="创建远程仓库"></a>创建远程仓库</h2><p>在GitHub上创建远程仓库</p>
+<p>①ssh-keygen -t rsa -C “<a href="mailto:sssusheng@qq.com">sssusheng@qq.com</a>“  创建SSH key</p>
+<p>②登录GitHub，在设置里添加Add SSH key，把id_rsa.pub文件的内容粘贴进去</p>
+<p>③在GitHub里创建一个空的仓库learngit</p>
+<p>④git remote add origin <a href="mailto:git@github.com">git@github.com</a>:sssusheng/learngit.git  关联本地仓库</p>
+<p>⑤git push -u origin master  把本地库的所有内容推送到远程库上</p>
+<p>⑥git push origin master  可以把本地master分支的最新修改推送到Github</p>
+<p>⑦git clone <a href="mailto:git@github.com">git@github.com</a>:sssusheng/learngit.git  把远程仓库克隆到本地</p>
+<h2 id="Git分支管理"><a href="#Git分支管理" class="headerlink" title="Git分支管理"></a>Git分支管理</h2><p>分支：例如一个新功能开发需要两周，第一周做了一半，提交了不完整的代码，那么就会影响到其他人的工作，此时拉一个属于自己的分支，其他人看不到，直到开发完毕，再合并到原有分支上</p>
+<h3 id="创建分支"><a href="#创建分支" class="headerlink" title="创建分支"></a>创建分支</h3><p>①git switch -c dev  创建dev分支，并切换到dev分支</p>
+<p>​        -c 表示创建并切换，不用-c是两条命令</p>
+<p>​        git branch dev</p>
+<p>​        git switch dev</p>
+<p>②git branch  查看当前分支并列出所有分支</p>
+<p>③git switch master  从dev分支切换回master分支</p>
+<p>​        此时，在dev分支上提交的修改并没有合并到master分支上</p>
+<p>④git merge dev  把dev分支的工作成果合并到master分支上</p>
+<p>​        合并指定分支到当前分支，此时使用的是Fast forward模式，删除分支后，会丢掉分支信息</p>
+<p>​        –no-ff  加入这个参数，禁用Fast forward模式，用普通模式合并，合并后可以在主分支上看出曾经做过合并操作</p>
+<p>⑤git branch -d dev  删除dev分支</p>
+<p>​        -D 强行删除</p>
+<h3 id="解决冲突"><a href="#解决冲突" class="headerlink" title="解决冲突"></a>解决冲突</h3><p>当在两条分支上对同一个文件进行了不同的修改时，Git无法自动合并分支，必须要先解决冲突</p>
+<p>解决冲突就是把Git合并失败的文件手动编辑为我们希望的内容再提交</p>
+<p>git log –graph  可以看到分支合并图</p>
+<h3 id="修复Bug"><a href="#修复Bug" class="headerlink" title="修复Bug"></a>修复Bug</h3><p>临时需要修复bug，需要拉一个bug-xxx的分支出来，但是自己的工作分支上的任务还没有完成</p>
+<p>git stash  把当前工作现场储藏起来，等恢复现场后继续工作</p>
+<p>bug修复之后，恢复工作现场</p>
+<p>​    git stash list  查看储藏的工作现场</p>
+<p>​    git stash apply + git stash drop = git stash pop</p>
+<p>git cherry-pick <commit id>  在master分支上修复的bug，把修改同步到dev分支上，避免重复修改</p>
+<h3 id="多人协同开发"><a href="#多人协同开发" class="headerlink" title="多人协同开发"></a>多人协同开发</h3><p>git remote -v  查看远程库信息</p>
+<p>本地新建的分支如果不推送到远程，对其他人就是不可见的</p>
+<p>git push origin branch-name  从本地推送分支</p>
+<p>git pull  抓取远程最新提交</p>
+<p>当本地分支推送失败时，先抓取最新提交，再试图合并，如果合并有冲突，先解决冲突，再推送</p>
+<p>git pull 抓取失败，提示no tracking information，需要建立本地分支和远程分支的关联</p>
+<p>git branch –set-upstream branch-name origin/branch-name</p>
+<h2 id="Git标签管理"><a href="#Git标签管理" class="headerlink" title="Git标签管理"></a>Git标签管理</h2><p><commit id>是一堆乱七八糟的数字，难记难找</p>
+<p>创建一个标签tag，和某一版本的commit关联起来，查找的时候对着tag找commit就方便了</p>
+<p>git tag <tag name>  先切换到需要打标签的分支上，再创建标签</p>
+<p>git tag  查看所有标签</p>
+<p>git tag <tag name> <commit id>  指定在哪个commit上打标签</p>
+<p>git tag -a <tag name> -m “备注”</p>
+<p>git tag -d <tag name>   删除本地标签</p>
+<p>git push origin :refs/tags/<tag name>  删除远程库标签</p>
+<p>​        删除的时候，先删本地，再删远程</p>
+<p>git push origin –tags  推送所有尚未推送的标签到远程</p>
+<p>git push origin <tag name>  推送某一标签到远程</p>
 ]]></content>
   </entry>
 </search>
